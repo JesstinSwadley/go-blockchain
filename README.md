@@ -18,7 +18,7 @@ Make sure you have Go installed on your machine.
 ### Installation
 1. Clone the repository:
    ```sh
-   git clone https://github.com/JesstinSwadley/go-cli-todo-list.git
+   git clone https://github.com/JesstinSwadley/go-blockchain.git
    cd go-blockchain
    ```
 2. Build the project:
