@@ -201,7 +201,7 @@ func NewBlockchain(address string) *Blockchain {
 
 	err = db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(blocksBucket))
-		tip = b.Get([]byte("1"))
+		tip = b.Get([]byte("l"))
 
 		return nil
 	})

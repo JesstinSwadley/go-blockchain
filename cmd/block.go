@@ -8,7 +8,6 @@ import (
 	"time"
 )
 
-// Block keeps block headers
 type Block struct {
 	Timestamp     int64
 	Transactions  []*Transaction

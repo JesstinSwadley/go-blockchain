@@ -57,7 +57,7 @@ func (out *TXOutput) CanBeUnlockedWith(unlockingData string) bool {
 
 func NewCoinbaseTX(to, data string) *Transaction {
 	if data == "" {
-		data = fmt.Sprintf("Reward to '%s", to)
+		data = fmt.Sprintf("Reward to '%s'", to)
 	}
 
 	txin := TXInput{[]byte{}, -1, data}
@@ -94,7 +94,7 @@ func NewUTXOTransaction(from, to string, amount int, bc *Blockchain) *Transactio
 	outputs = append(outputs, TXOutput{amount, to})
 
 	if acc > amount {
-		outputs = append(outputs, TXOutput{acc - amount, from}) // a change
+		outputs = append(outputs, TXOutput{acc - amount, from})
 	}
 
 	tx := Transaction{nil, inputs, outputs}

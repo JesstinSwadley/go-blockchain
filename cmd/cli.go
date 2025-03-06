@@ -57,7 +57,9 @@ func (cli *CLI) printChain() {
 
 		fmt.Printf("Prev. hash: %x\n", block.PrevBlockHash)
 		fmt.Printf("Hash: %x\n", block.Hash)
+
 		pow := NewProofOfWork(block)
+
 		fmt.Printf("PoW: %s\n", strconv.FormatBool(pow.Validate()))
 		fmt.Println()
 
