@@ -16,17 +16,19 @@ type Block struct {
 	Nonce         int
 }
 
-func (b *Block) Serialize() []byte {
-	var result bytes.Buffer
-	encoder := gob.NewEncoder(&result)
+func NewBlock(transactions []*Transaction, prevBlockHash []byte) *Block {
+	block := &Block{time.Now().Unix(), transactions, prevBlockHash, []byte{}, 0}
+	pow := NewProofOfWork(block)
+	nonce, hash := pow.Run()
 
-	err := encoder.Encode(b)
+	block.Hash = hash[:]
+	block.Nonce = nonce
 
-	if err != nil {
-		log.Panic(err)
-	}
+	return block
+}
 
-	return result.Bytes()
+func NewGenesisBlock(coinbase *Transaction) *Block {
+	return NewBlock([]*Transaction{coinbase}, []byte{})
 }
 
 func (b *Block) HashTransactions() []byte {
@@ -42,19 +44,17 @@ func (b *Block) HashTransactions() []byte {
 	return txHash[:]
 }
 
-func NewBlock(transactions []*Transaction, prevBlockHash []byte) *Block {
-	block := &Block{time.Now().Unix(), transactions, prevBlockHash, []byte{}, 0}
-	pow := NewProofOfWork(block)
-	nonce, hash := pow.Run()
+func (b *Block) Serialize() []byte {
+	var result bytes.Buffer
+	encoder := gob.NewEncoder(&result)
 
-	block.Hash = hash[:]
-	block.Nonce = nonce
+	err := encoder.Encode(b)
 
-	return block
-}
+	if err != nil {
+		log.Panic(err)
+	}
 
-func NewGenesisBlock(coinbase *Transaction) *Block {
-	return NewBlock([]*Transaction{coinbase}, []byte{})
+	return result.Bytes()
 }
 
 func DeserializeBlock(d []byte) *Block {
