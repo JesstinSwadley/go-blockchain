@@ -27,6 +27,7 @@ func (u UTXOSet) FindSpendableOutputs(pubkeyHash []byte, amount int) (int, map[s
 			outs := DeserializeOutputs(v)
 
 			for outIdx, out := range outs.Outputs {
+
 				if out.IsLockedWithKey(pubkeyHash) && accumulated < amount {
 					accumulated += out.Value
 					unspentOutputs[txID] = append(unspentOutputs[txID], outIdx)
@@ -56,6 +57,7 @@ func (u UTXOSet) FindUTXO(pubKeyHash []byte) []TXOutput {
 			outs := DeserializeOutputs(v)
 
 			for _, out := range outs.Outputs {
+
 				if out.IsLockedWithKey(pubKeyHash) {
 					UTXOs = append(UTXOs, out)
 				}
@@ -138,6 +140,10 @@ func (u UTXOSet) Reindex() {
 
 		return nil
 	})
+
+	if err != nil {
+		log.Panic(err)
+	}
 }
 
 func (u UTXOSet) Update(block *Block) {
@@ -147,13 +153,16 @@ func (u UTXOSet) Update(block *Block) {
 		b := tx.Bucket([]byte(utxoBucket))
 
 		for _, tx := range block.Transactions {
-			if tx.IsCoinbase() == false {
+
+			if !tx.IsCoinbase() {
+
 				for _, vin := range tx.Vin {
 					updatedOuts := TXOutputs{}
 					outsBytes := b.Get(vin.Txid)
 					outs := DeserializeOutputs(outsBytes)
 
 					for outIdx, out := range outs.Outputs {
+
 						if outIdx != vin.Vout {
 							updatedOuts.Outputs = append(updatedOuts.Outputs, out)
 						}
@@ -161,11 +170,13 @@ func (u UTXOSet) Update(block *Block) {
 
 					if len(updatedOuts.Outputs) == 0 {
 						err := b.Delete(vin.Txid)
+
 						if err != nil {
 							log.Panic(err)
 						}
 					} else {
 						err := b.Put(vin.Txid, updatedOuts.Serialize())
+
 						if err != nil {
 							log.Panic(err)
 						}
@@ -187,6 +198,7 @@ func (u UTXOSet) Update(block *Block) {
 
 		return nil
 	})
+
 	if err != nil {
 		log.Panic(err)
 	}
